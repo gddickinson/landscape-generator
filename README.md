@@ -188,3 +188,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - OpenCV for feature mask generation
 - Scipy for various mathematical operations
 - Shapely for geometric operations
+
+
+---
+*Built with AI assistance from [Claude (Anthropic)](https://claude.com/).*
