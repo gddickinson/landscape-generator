@@ -36,34 +36,36 @@ A sophisticated Python-based procedural landscape generator that creates realist
 
 1. Clone this repository:
 ```bash
-git clone [your-repo-url]
-cd enhanced-landscape-generator
+git clone https://github.com/gddickinson/landscape-generator.git
+cd landscape-generator
 ```
 
 2. Install required dependencies:
 ```bash
-pip install numpy matplotlib scipy opencv-python shapely
+pip install -r requirements.txt
 ```
 
 ## Usage
 
+### Command line
+
+```bash
+python generate.py                              # seed 42, 512 x 512, summer
+python generate.py --seed 7 --season winter     # seasons: spring, summer, fall, winter
+python generate.py --size 256 --density 0.15 --output ./out
+```
+
 ### Basic Usage
 
-Generate a landscape with default settings:
+Generate a landscape with default settings from Python:
 
 ```python
-from landscape_generator import EnhancedTerrainParams, EnhancedLandscapeGenerator, Season
+from terrain.params import EnhancedTerrainParams, Season
+from terrain.pipeline import generate_landscape
 
-# Create default parameters
-params = EnhancedTerrainParams(
-    size=512,
-    season=Season.SUMMER,
-    feature_density=0.08
-)
-
-# Create and run generator
-generator = EnhancedLandscapeGenerator(params, seed=42)
-generator.generate_enhanced_landscape()
+params = EnhancedTerrainParams(size=512, season=Season.SUMMER, feature_density=0.08)
+land = generate_landscape(params, seed=42)   # same seed -> same landscape
+land.height_map, land.moisture_map, land.feature_masks, land.color_map
 ```
 
 ### Customizing Parameters
@@ -115,8 +117,8 @@ The generator produces two main output files:
 ### Feature Generation
 - Natural feature placement using Voronoi diagrams
 - Organic shape generation for lakes and forests
-- Realistic road network generation with curved paths
-- Settlement placement based on terrain suitability
+- Road network generation with jittered, curved paths between random settlement points
+- Settlement areas placed as Voronoi regions (like the other features)
 
 ### Biome System
 - Dynamic biome assignment based on height and moisture
@@ -163,15 +165,14 @@ Areas for potential enhancement:
 ## Technical Details
 
 ### Noise Generation
-- Multi-octave Perlin-like noise
-- Random rotation and phase shifting
+- Multi-octave Perlin-like noise built from randomly rotated, phase-shifted sine waves plus Gaussian jitter
 - Gaussian smoothing for natural transitions
+- One seeded NumPy generator (`np.random.default_rng(seed)`) drives every random draw, so a seed reproduces the landscape
 
 ### Feature Placement
 - Voronoi diagram-based region generation
 - Organic shape generation using noise masks
-- Path finding for road networks
-- Settlement clustering algorithms
+- Road segments through randomly offset waypoints between settlement points
 
 ### Visualization
 - Matplotlib for 2D and 3D plotting
@@ -187,7 +188,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - Built using numpy and matplotlib
 - OpenCV for feature mask generation
 - Scipy for various mathematical operations
-- Shapely for geometric operations
+- Shapely (used only by the legacy `enhanced-landscape.py` script)
 
 
 ---
