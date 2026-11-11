@@ -24,6 +24,11 @@ class TerrainGenerator:
         self.params = params or EnhancedTerrainParams()
         self._rng = np.random.default_rng(seed)
 
+    @property
+    def rng(self) -> np.random.Generator:
+        """The seeded generator shared by the noise and the feature placement."""
+        return self._rng
+
     # ── noise primitives ─────────────────────────────────────────────────
 
     def generate_noise(

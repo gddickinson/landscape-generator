@@ -2,10 +2,10 @@
 Terrain feature generation: lakes, forests, settlements, roads, etc.
 
 Uses Voronoi tessellation with organic noise masking for natural shapes,
-and simple path generation for road networks.
+and simple path generation for road networks. All random draws come from the
+TerrainGenerator's seeded generator, so a seed reproduces the whole landscape.
 """
 
-import random
 from typing import Dict, Tuple
 
 import cv2
@@ -92,6 +92,8 @@ class FeatureGenerator:
         self.params = params
         self.noise_gen = noise_gen
         self.features = dict(DEFAULT_FEATURES)
+        self.rng = noise_gen.rng
+        self._base_snow_level = params.snow_level
 
     def generate_feature_mask(self, feature: TerrainFeature) -> np.ndarray:
         """Generate an organic feature mask using Voronoi + noise."""
@@ -101,7 +103,7 @@ class FeatureGenerator:
         base_noise = self.noise_gen.generate_noise((size, size), 4.0)
 
         num_points = max(4, int(size * self.params.feature_density))
-        points = np.random.rand(num_points, 2) * size
+        points = self.rng.random((num_points, 2)) * size
 
         try:
             vor = Voronoi(points)
@@ -109,13 +111,14 @@ class FeatureGenerator:
             # Degenerate point set — return empty mask
             return mask
 
-        for region in vor.regions:
+        # Visit the cells in input-point order (independent of qhull's region numbering);
+        # unbounded cells are skipped. Vertices are already in pixel coordinates.
+        for point_idx in range(num_points):
+            region = vor.regions[vor.point_region[point_idx]]
             if -1 in region or len(region) == 0:
                 continue
-            if random.random() < 0.3:
-                polygon = [vor.vertices[i] for i in region]
-                img_coords = np.array(polygon) * size / max(vor.vertices.max(), 1e-6)
-                img_coords = img_coords.astype(np.int32)
+            if self.rng.random() < 0.3:
+                img_coords = vor.vertices[region].astype(np.int32)
                 cv2.fillPoly(mask, [img_coords], 1)
 
         mask *= (base_noise > 0.3).astype(float)
@@ -128,18 +131,18 @@ class FeatureGenerator:
         mask = np.zeros((size, size))
 
         num_settlements = max(2, int(size * self.params.feature_density * 0.3))
-        settlements = np.random.rand(num_settlements, 2) * size
+        settlements = self.rng.random((num_settlements, 2)) * size
 
         for i in range(len(settlements)):
             for j in range(i + 1, len(settlements)):
-                if random.random() < 0.4:
+                if self.rng.random() < 0.4:
                     pt1 = settlements[i].astype(int)
                     pt2 = settlements[j].astype(int)
                     num_points = 5
                     prev_point = None
                     for k in range(num_points):
                         t = k / (num_points - 1)
-                        offset = np.random.normal(0, size * 0.05, 2)
+                        offset = self.rng.normal(0, size * 0.05, 2)
                         mid_point = (pt1 * (1 - t) + pt2 * t + offset).astype(int)
                         if prev_point is not None:
                             cv2.line(
@@ -159,11 +162,16 @@ class FeatureGenerator:
         height_map: np.ndarray,
         moisture_map: np.ndarray,
     ) -> Tuple[np.ndarray, np.ndarray]:
-        """Modify maps according to the current season."""
+        """Modify maps according to the current season.
+
+        Winter lowers the snow line to 80 % of the level the generator was created with
+        (idempotent: calling again does not lower it further; other seasons restore it).
+        """
         season = self.params.season
+        self.params.snow_level = self._base_snow_level
 
         if season == Season.WINTER:
-            self.params.snow_level *= 0.8
+            self.params.snow_level = self._base_snow_level * 0.8
             moisture_map = moisture_map * 0.7
         elif season == Season.SUMMER:
             moisture_map = moisture_map * 0.9
