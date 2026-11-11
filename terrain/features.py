@@ -8,13 +8,13 @@ TerrainGenerator's seeded generator, so a seed reproduces the whole landscape.
 
 from typing import Dict, Tuple
 
-import cv2
 import numpy as np
 from scipy.ndimage import gaussian_filter
 from scipy.spatial import Voronoi
 
 from .params import EnhancedTerrainParams, Season, TerrainFeature
 from .generator import TerrainGenerator
+from .raster import draw_line, fill_polygon
 
 
 # ── Default feature catalogue ───────────────────────────────────────────────
@@ -118,8 +118,7 @@ class FeatureGenerator:
             if -1 in region or len(region) == 0:
                 continue
             if self.rng.random() < 0.3:
-                img_coords = vor.vertices[region].astype(np.int32)
-                cv2.fillPoly(mask, [img_coords], 1)
+                fill_polygon(mask, vor.vertices[region], 1)
 
         mask *= (base_noise > 0.3).astype(float)
         mask = gaussian_filter(mask, sigma=2.0)
@@ -145,13 +144,7 @@ class FeatureGenerator:
                         offset = self.rng.normal(0, size * 0.05, 2)
                         mid_point = (pt1 * (1 - t) + pt2 * t + offset).astype(int)
                         if prev_point is not None:
-                            cv2.line(
-                                mask,
-                                tuple(prev_point),
-                                tuple(mid_point),
-                                1,
-                                thickness=2,
-                            )
+                            draw_line(mask, prev_point, mid_point, 1, thickness=2)
                         prev_point = mid_point
 
         mask = gaussian_filter(mask, sigma=1.0)
