@@ -1,0 +1,42 @@
+/* Landscape Generator accent palette (meadow green / sky blue / sand) and page styles. Shared theme: style.css. */
+:root { --accent:#5ee08a; --accent2:#4cc9f0; --accent3:#ffc96b; --glow:rgba(94,224,138,.13); }
+button, .btn, .seg button.on { color:#04140a; }
+main ol, main ul { max-width:84ch; }
+.sw { display:inline-block; width:14px; height:14px; border-radius:3px; border:1px solid #445; vertical-align:-2px; margin-right:6px; }
+.card .sw { display:inline-block; margin-top:0; }
+
+/* home */
+.home-hero { display:grid; grid-template-columns:1fr 340px; gap:28px; align-items:center; }
+.hero-map { margin:0; }
+.hero-map canvas, .season canvas, .pair canvas { display:block; width:100%; height:auto; aspect-ratio:1; border-radius:8px;
+  border:1px solid var(--line); background:#06121a; box-shadow:0 0 36px var(--glow); }
+.door.a { border-top:2px solid var(--accent); } .door.b { border-top:2px solid var(--accent2); } .door.c { border-top:2px solid var(--accent3); }
+
+/* generate */
+.gen { display:grid; grid-template-columns:300px minmax(0, 1fr); gap:20px; align-items:start; }
+#ctl { margin:0; position:sticky; top:84px; }
+.seedrow { align-items:flex-end; } .seedrow > div { min-width:0; } .seedrow button { flex:none; margin:0 0 1px; }
+.grp { border-top:1px solid var(--line); margin-top:12px; }
+.grp summary { cursor:pointer; padding:8px 0; font:600 13px var(--mono); text-transform:uppercase; letter-spacing:.1em; color:var(--accent); }
+.viewrow { margin-bottom:10px; } .viewrow > div { max-width:320px; }
+.stage.land { background:#06121a; min-height:200px; }
+.stage.land canvas { max-height:78vh; object-fit:contain; }
+canvas.pixels { image-rendering:pixelated; }
+.busy { position:absolute; inset:auto 0 0 0; padding:10px 14px; background:rgba(5,6,12,.82); display:flex; gap:12px; align-items:center; font:13px var(--mono); }
+.busy progress { flex:1; height:8px; accent-color:var(--accent); }
+.legend { list-style:none; padding:0; margin:6px 0; columns:2 240px; font-size:14px; }
+.legend li { break-inside:avoid; padding:2px 0; } .legend b { font:600 12px var(--mono); color:var(--mute); }
+
+/* seasons + verify */
+.seasons { display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:14px; margin-top:16px; }
+.season { margin:0; padding:12px; } .season figcaption { margin-top:8px; display:flex; flex-direction:column; gap:3px; }
+.swatches { margin:4px 0; }
+.row.narrow > * { max-width:240px; } .row.narrow button { flex:none; margin-bottom:1px; }
+.pair { display:grid; grid-template-columns:repeat(2, minmax(0, 240px)); gap:14px; }
+.pair figure { margin:0; } .pair figcaption { font-size:13px; color:var(--mute); }
+.pair canvas { image-rendering:pixelated; }
+.vcase h2:first-child { margin-top:0; }
+
+@media (max-width:900px) { .gen { grid-template-columns:1fr; } #ctl { position:static; } }
+@media (max-width:760px) { .home-hero { grid-template-columns:1fr; } .hero-map { max-width:340px; } }
+.busy[hidden] { display:none; }

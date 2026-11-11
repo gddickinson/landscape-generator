@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Landscape">
+  <rect width="32" height="32" rx="6" fill="#06121a"/>
+  <path d="M2 24 L11 10 L16 17 L20 12 L30 24 Z" fill="#6f6f6f"/>
+  <path d="M11 10 L14 14.5 L12 14 L9.5 13 Z M20 12 L22.5 15 L19 15 Z" fill="#fff"/>
+  <path d="M2 24 H30 V28 H2 Z" fill="#2d5a27"/><path d="M2 27 H30 V30 H2 Z" fill="#003366"/>
+</svg>

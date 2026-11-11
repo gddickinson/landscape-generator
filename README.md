@@ -86,6 +86,39 @@ params = EnhancedTerrainParams(
 )
 ```
 
+## Web interface and static site
+
+The generator also runs in the browser: **https://gddickinson.github.io/landscape-generator/** (GitHub Pages, once
+published). The site is the working generator, not a gallery: a JavaScript port of the `terrain` package that gives
+the same landscape as the Python for the same seed (it reimplements NumPy's SeedSequence / PCG64 / ziggurat normal
+sampler bit for bit, then every pipeline step in the same order). Pages:
+
+- **Generate**: seed, size (64-512), season, feature density, octaves, persistence, lacunarity, base frequency and
+  the sea / mountain / snow levels; views: coloured terrain, shaded relief, 3-D, height map, moisture map, feature
+  map and the 2 x 2 analysis layout; a coverage legend; PNG export and shareable links. Generation runs in a Web
+  Worker: about 1 s at 256 x 256 and 5 s at 512 x 512 (the Python default), so the page defaults to 256.
+- **Seasons**: one seed in all four seasons side by side.
+- **Verify**: Python reference landscapes next to the same seeds generated in the browser, with the differences
+  measured (identical colours; height maps equal to rounding).
+
+![Home](docs/img/home.png)
+![Generate](docs/img/generate.png)
+![3-D view](docs/img/generate_3d.png)
+![Seasons](docs/img/seasons.png)
+
+### Run the web app
+
+```bash
+pip install -r requirements-web.txt
+python run_web.py                  # http://127.0.0.1:8162
+python -m pytest -q tests          # Python tests + web API + node tests of the JS port
+python scripts/build_static.py     # static site in site/ (published by .github/workflows/pages.yml)
+```
+
+The local app adds one thing the static site cannot do: running the Python generator on any parameters to compare
+with the browser (Verify page). `scripts/make_terrain_fixture.py` regenerates the Python reference values used by
+the node tests (`terrain/web/static/*.test.mjs`).
+
 ## Output Files
 
 The generator produces two main output files:
