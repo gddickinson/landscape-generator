@@ -12,9 +12,8 @@ import argparse
 import sys
 
 from terrain.params import EnhancedTerrainParams, Season
-from terrain.generator import TerrainGenerator
 from terrain.biomes import BiomeColorMapper
-from terrain.features import FeatureGenerator
+from terrain.pipeline import generate_landscape
 from terrain.visualization import TerrainVisualizer
 
 
@@ -51,34 +50,11 @@ def main() -> None:
         feature_density=args.density,
     )
 
-    gen = TerrainGenerator(params, seed=args.seed)
-    biome_mapper = BiomeColorMapper(params)
-    feat_gen = FeatureGenerator(params, gen)
-    viz = TerrainVisualizer(params, biome_mapper, output_dir=args.output)
-
     print(f"Generating terrain (size={args.size}, season={args.season}) ...")
-
-    height_map = gen.generate_fractal_noise()
-    moisture_map = gen.generate_fractal_noise()
-
-    height_map, moisture_map = feat_gen.apply_seasonal_effects(height_map, moisture_map)
-
-    feature_masks = {}
-    for name, feature in feat_gen.features.items():
-        if name == "road_network":
-            feature_masks[name] = feat_gen.generate_road_network()
-        else:
-            feature_masks[name] = feat_gen.generate_feature_mask(feature)
-
-        height_map += feature_masks[name] * feature.height_modifier
-        moisture_map += feature_masks[name] * feature.moisture_modifier
-
-    height_map = (height_map - height_map.min()) / (height_map.max() - height_map.min())
-    moisture_map = moisture_map.clip(0, 1)
-
-    color_map = viz.generate_color_map(
-        height_map, moisture_map, feature_masks, feat_gen.features
-    )
+    land = generate_landscape(params, seed=args.seed)
+    viz = TerrainVisualizer(params, BiomeColorMapper(params), output_dir=args.output)
+    height_map, moisture_map, color_map = land.height_map, land.moisture_map, land.color_map
+    feature_masks = land.feature_masks
 
     print("Rendering 3D surface ...")
     viz.plot_3d(height_map, color_map)
