@@ -7,6 +7,9 @@ Modules:
     biomes       - Biome/terrain color mapping and seasonal colors
     features     - Feature masks, road networks, settlements (Voronoi-based)
     visualization - 3D surface plots and 2D analysis views
+    raster       - NumPy polygon fill / thick line for feature masks
+    pipeline     - generate_landscape(): the whole pipeline in one call
+    web/         - FastAPI web app and the JS port (see INTERFACE.md)
 """
 
 from .params import TerrainParams, EnhancedTerrainParams, Season, TerrainFeature
