@@ -2,12 +2,14 @@
 
 1. Mountain ranges were painted rock and then snow over the same mask, so they always showed
    solid white. Snow must appear only above the (season-adjusted) snow line; rock below it.
+2. SEASONAL_COLORS defined 'fields' and 'trees' per season but they were never used: the
+   fields and forest features had fixed colours in every season.
 """
 import unittest
 
 import numpy as np
 
-from terrain.biomes import BiomeColorMapper, hex_to_rgb
+from terrain.biomes import SEASONAL_COLORS, BiomeColorMapper, hex_to_rgb
 from terrain.features import DEFAULT_FEATURES
 from terrain.params import EnhancedTerrainParams, Season
 from terrain.visualization import TerrainVisualizer
@@ -40,6 +42,18 @@ class TestMountainRangeColours(unittest.TestCase):
         masks["mountain_range"][:] = 1.0
         c = viz.generate_color_map(np.full((4, 4), 0.75), np.full((4, 4), 0.5), masks, DEFAULT_FEATURES)
         np.testing.assert_allclose(c[0, 0], hex_to_rgb("#FFFFFF"))
+
+
+class TestSeasonalFeatureColours(unittest.TestCase):
+    def test_fields_and_trees_follow_season(self):
+        for season in Season:
+            pal = SEASONAL_COLORS[season]
+            np.testing.assert_allclose(_colors(season, "fields", 0.5)[0, 0], hex_to_rgb(pal["fields"]))
+            np.testing.assert_allclose(_colors(season, "forest", 0.5)[0, 0], hex_to_rgb(pal["trees"]))
+
+    def test_unmasked_cells_keep_biome_colour(self):
+        c = _colors(Season.WINTER, "fields", 0.5)
+        np.testing.assert_allclose(c[3, 3], hex_to_rgb(SEASONAL_COLORS[Season.WINTER]["grassland"]))
 
 
 if __name__ == "__main__":

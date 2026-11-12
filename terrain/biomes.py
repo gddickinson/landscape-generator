@@ -40,6 +40,11 @@ SEASONAL_COLORS: Dict[Season, Dict[str, str]] = {
 }
 
 
+# Feature colours (by their name in TerrainFeature.color_map) that take the season's
+# palette entry instead of the fixed hex: crops -> "fields", trees -> "trees".
+SEASONAL_FEATURE_COLORS: Dict[str, str] = {"crops": "fields", "trees": "trees"}
+
+
 # ── Colour helper ───────────────────────────────────────────────────────────
 
 def hex_to_rgb(hex_color: str) -> Tuple[float, float, float]:

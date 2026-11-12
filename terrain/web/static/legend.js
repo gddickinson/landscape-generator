@@ -1,7 +1,7 @@
 // Legend for the coloured terrain: every biome and feature colour of the season, with the share of
 // the map it covers in the current landscape.
 import { esc, list } from './core.js';
-import { SEASONAL_COLORS, BIOME_COLORS } from './terrain_biomes.js';
+import { SEASONAL_COLORS, BIOME_COLORS, SEASONAL_FEATURE_COLORS } from './terrain_biomes.js';
 import { FEATURES } from './terrain_features.js';
 
 // [name, hex] in painting order; later entries win when two share a colour.
@@ -11,7 +11,8 @@ export function legendEntries(season) {
     ['Deep water', BIOME_COLORS.deep], ['Shallow water', BIOME_COLORS.shallow], ['Beach', BIOME_COLORS.beach],
     ['Grassland', pal.grassland], ['Forest (moist)', pal.forest], ['Mountain rock', BIOME_COLORS.rock],
     ['Snow', BIOME_COLORS.snow],
-    ...FEATURES.flatMap(f => Object.entries(f.color_map).map(([part, hx]) => [`${f.name} (${part})`, hx])),
+    ...FEATURES.flatMap(f => Object.entries(f.color_map).map(([part, hx]) =>
+      [`${f.name} (${part})`, SEASONAL_FEATURE_COLORS[part] ? pal[SEASONAL_FEATURE_COLORS[part]] : hx])),
   ];
 }
 

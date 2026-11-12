@@ -1,13 +1,15 @@
 // Port of terrain/biomes.py (SEASONAL_COLORS, BiomeColorMapper.get_terrain_color) and
 // TerrainVisualizer.generate_color_map: biome colour by height and moisture, then feature colours
 // painted over where a feature mask is above 0.5 (in catalogue order; a feature's "snow" colour only
-// at or above the snow line).
+// at or above the snow line; crops and trees in the season's fields / trees colours).
 export const SEASONAL_COLORS = {
   spring: { grassland: '#4CA64C', forest: '#2D5A27', fields: '#90B44B', trees: '#4F7942' },
   summer: { grassland: '#2D5A27', forest: '#1A3B1A', fields: '#7D944D', trees: '#1A3B1A' },
   fall: { grassland: '#8B6B43', forest: '#8B4513', fields: '#DAA520', trees: '#D2691E' },
   winter: { grassland: '#E8E8E8', forest: '#4F666A', fields: '#F5F5F5', trees: '#2F4F4F' },
 };
+// Feature colours that take the season's palette entry (biomes.py SEASONAL_FEATURE_COLORS).
+export const SEASONAL_FEATURE_COLORS = { crops: 'fields', trees: 'trees' };
 export const BIOME_COLORS = { deep: '#001933', shallow: '#003366', beach: '#D9B382', rock: '#6F6F6F', snow: '#FFFFFF' };
 
 export const hexToRgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
@@ -32,7 +34,8 @@ export function colorMap(height, moisture, masks, features, p, snowLevel) {
   for (const f of features) {
     const mask = masks[f.key];
     for (const [name, hx] of Object.entries(f.color_map)) {
-      const c = rgb(hx), snowOnly = name === 'snow'; // snow only at or above the season's snow line
+      const seasonal = SEASONAL_FEATURE_COLORS[name];
+      const c = rgb(seasonal ? pal[seasonal] : hx), snowOnly = name === 'snow'; // snow only at or above the snow line
       for (let k = 0; k < n2; k++) {
         if (mask[k] > 0.5 && (!snowOnly || height[k] >= snowLevel)) { out[4 * k] = c[0]; out[4 * k + 1] = c[1]; out[4 * k + 2] = c[2]; }
       }

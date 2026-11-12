@@ -26,7 +26,7 @@ route('seasons', async (args, query) => {
     <span class="swatches">${list(Object.entries(s.colors), ([k, hx]) => `<span class="sw" title="${esc(k)} ${esc(hx)}" style="background:${esc(hx)}"></span>`)}</span>
     <a class="small" href="#/generate?seed=${seed}&size=128&season=${esc(s.key)}" data-open>Open in the generator</a></figcaption></figure>`)}</div>
   <p class="small mute">128 x 128 cells each, generated in your browser. Swatches: the season's grassland, forest,
-  fields and trees colours from <code>terrain/biomes.py</code> (the generator paints grassland and forest with them).</p>`;
+  fields and trees colours from <code>terrain/biomes.py</code> (grassland and moist forest biomes, and the agricultural-field and forest features).</p>`;
   const results = {};
   const luts = await api('/colormaps');
   const drawAll = () => info.seasons.forEach(s => results[s.key] && paint(document.getElementById('c-' + s.key), results[s.key], view, luts));

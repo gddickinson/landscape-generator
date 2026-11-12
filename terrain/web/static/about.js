@@ -29,7 +29,8 @@ route('about', async () => {
     <li><b>Biomes</b> (<code>biomes.py</code>): after rescaling heights to 0-1, cells below the sea level
       (${d.sea_level}) are deep or shallow water, then beach (up to sea level + 0.05), grassland or forest (moisture
       &gt; 0.6) up to the mountain level (${d.mountain_level}), rock up to the snow level (${d.snow_level}), then
-      snow. Grassland and forest take the season's colours; feature colours are painted where a mask exceeds 0.5.</li>
+      snow. Grassland and forest take the season's colours; feature colours are painted where a mask exceeds 0.5
+      (fields and forest features in the season's fields and trees colours, mountain-range snow only above the snow line).</li>
   </ol>
 
   <h2>Same seed, same landscape</h2>
