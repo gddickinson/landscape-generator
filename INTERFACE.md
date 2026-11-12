@@ -6,7 +6,7 @@
 |------|---------|----------------------|
 | `params.py` | Enums, dataclasses for all configuration | `Season`, `TerrainParams`, `EnhancedTerrainParams`, `TerrainFeature` |
 | `generator.py` | Noise primitives and fractal terrain; owns the seeded RNG | `TerrainGenerator` (`.generate_noise()`, `.generate_fractal_noise()`, `.rng`) |
-| `biomes.py` | Colour mapping, seasonal palettes | `BiomeColorMapper`, `SEASONAL_COLORS`, `hex_to_rgb()` |
+| `biomes.py` | Colour mapping, seasonal palettes | `BiomeColorMapper`, `SEASONAL_COLORS`, `SEASONAL_FEATURE_COLORS`, `hex_to_rgb()` |
 | `features.py` | Voronoi feature masks, road networks, seasonal effects (all draws from the shared RNG) | `FeatureGenerator`, `DEFAULT_FEATURES` |
 | `raster.py` | NumPy polygon fill and thick line for feature masks (replaced cv2; mirrored in JS) | `fill_polygon()`, `draw_line()` |
 | `pipeline.py` | The whole generation pipeline in one call (used by the CLI and the web app) | `generate_landscape()`, `Landscape` |
@@ -52,6 +52,7 @@
 |------|----------|
 | `tests/test_terrain.py` | Params, noise generation, biome mapping, feature masks |
 | `tests/test_feature_fixes.py` | Regression tests: seeded features, whole-map placement, idempotent winter snow line |
+| `tests/test_color_fixes.py` | Regression tests: mountain-range snow only above the snow line, seasonal fields/trees colours |
 | `tests/test_raster.py` | Polygon fill / thick line (and closeness to OpenCV when installed) |
 | `tests/test_web.py` | API endpoints, static build, fixture is current, runs the node tests |
 
