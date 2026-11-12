@@ -50,13 +50,17 @@ class TerrainVisualizer:
                     height_map[i, j], moisture_map[i, j], seasonal_colors
                 )
 
+        # Feature colours are painted where a mask exceeds 0.5, in catalogue order. A "snow"
+        # colour (mountain ranges) only applies at or above the season's snow line, so the
+        # range shows rock below it and snow above, like the biome colours.
+        above_snow_line = height_map >= self.params.snow_level
         for feature_name, mask in feature_masks.items():
             feature = features[feature_name]
-            for _color_name, color_hex in feature.color_map.items():
+            covered = mask > 0.5
+            for color_name, color_hex in feature.color_map.items():
+                where = covered & above_snow_line if color_name == "snow" else covered
                 rgb_color = hex_to_rgb(color_hex)
-                color_map = np.where(
-                    mask[:, :, np.newaxis] > 0.5, rgb_color, color_map
-                )
+                color_map = np.where(where[:, :, np.newaxis], rgb_color, color_map)
 
         return color_map
 

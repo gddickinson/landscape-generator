@@ -28,6 +28,8 @@ CASES = [  # (name, seed, overrides, store full arrays)
                           persistence=0.6, base_frequency=3.0, sea_level=0.4), False),
     ("spring-32", 123, dict(size=32, season=Season.SPRING, feature_density=0.2), False),
     ("fall-24", 2024, dict(size=24, season=Season.AUTUMN, lacunarity=2.5, mountain_level=0.6), False),
+    # mountain range both below and above the winter snow line, plus fields and forest features
+    ("winter-features-40", 1, dict(size=40, season=Season.WINTER, feature_density=0.3), False),
 ]
 SAMPLE = 64  # sampled values per map for the cases without full arrays
 
